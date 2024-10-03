@@ -64,8 +64,4 @@ def process_data(url, question):
     response_source = source_line.split(": ")[-1]  # Split on ": " and take the last part
     response.choices[0].message.content + check_link(response_source)
 
-    print(response.choices[0].message.content)
-    
     return response.choices[0].message.content
-
-    
