@@ -29,7 +29,7 @@ class ResponseModel(db.Model):
 # API routes     
 api.add_resource(resources.QueryWiki, '/api/query')
 
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "http://localhost:4200", "methods": ["GET", "POST"]}})
 
 # moved to run.py
 # if __name__ == '__main__':

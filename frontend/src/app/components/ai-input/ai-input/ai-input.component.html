@@ -1,0 +1,23 @@
+<div class="h-100 d-flex align-items-center justify-content-center" style="margin-top: 10%;">
+  <div>
+    <a> question</a>
+    <input type="text" class="form-control" style="display: flex; flex-direction: column; align-items: center;" [(ngModel)]="input.question" />
+  </div>
+
+  <div>
+    <a> url</a>
+    <input class="form-control" type="text" style="display: flex; flex-direction: column; align-items: center;" [(ngModel)]="input.url" />
+  </div>
+</div>
+
+
+<div  *ngIf ="response.result" class="card bg-light mb-3">
+
+  <p>{{response.result}}</p>
+
+</div>
+
+<div class="h-100 d-flex align-items-center justify-content-center" style="margin-top: 5%;">
+  <button class ="btn btn-primary" (click)="processWikiSite()">Submit</button>
+</div>
+
