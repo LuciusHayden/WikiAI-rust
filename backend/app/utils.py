@@ -10,7 +10,6 @@ client = OpenAI(
     api_key=config.OPENAI_KEY,
 )
 
-
 # currently unused
 def check_link(link):
     try:
@@ -29,12 +28,18 @@ def redirect_to_wayback(url):
 
 def process_data(url, question):
     # for testing without needing to use tokens
-    # return "test"
+    if (url == "" or question == ""):
+        return "Please enter a valid question and url"
+    
+    return "test"
     try:
         response = requests.get(url)
         html = response.text
         soup = BeautifulSoup(html, 'html.parser')
         context = []
+
+        # makes sure that the user is only using wikipedia websites
+        # 2 reasons, 1. the web scraper is setup for wikipedia, 2. The purpose of this project is to use wikipedia and return the links, not a budget chatgpt
         if "wikipedia" not in url:
             return "Please enter a valid Wikipedia URL"
         
@@ -44,9 +49,9 @@ def process_data(url, question):
             links = reference.find_all('a', href=True)
 
         for link in links:
-            if 'http' not in link['href']:
+            if 'http' not in link['href']: # make sure that the link is an actual link (references in wikipedia are not always links)
                 continue
-            print(link['href'])
+
             context.append(link['href'])
 
         messages = [{"role": "system", "content": content} for content in context]

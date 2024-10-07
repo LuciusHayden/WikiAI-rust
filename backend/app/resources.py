@@ -31,5 +31,4 @@ class QueryWiki(Resource):
         result_str = utils.process_data(url, question)
         
         response = main.ResponseModel(result_str)
-        print(response.result)
         return response, 201

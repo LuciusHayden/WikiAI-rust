@@ -20,7 +20,7 @@ export class AiInputComponent {
   }
 
   response : AiResponse = {
-    result: 'blah',
+    result: ' ',
     id: 0
   }
 
@@ -28,12 +28,9 @@ export class AiInputComponent {
    }
 
   processWikiSite() : void {
-    if (this.input.url && this.input.question) {
       this._aiInputService.processWikiSite(this.input).subscribe((response : AiResponse) => {
         this.response = response;
       })
-
-    }
   }
 
 }
