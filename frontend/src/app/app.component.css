@@ -1,0 +1,54 @@
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f8f9fa;
+  margin: 0;
+  padding: 0;
+}
+
+/* Navbar styling */
+.navbar {
+  background-color: #343a40;
+}
+
+.navbar-brand, .nav-link {
+  color: white !important;
+}
+
+/* Hero section to center the app-ai-input component */
+.hero-section {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.hero-section h1 {
+  color: #343a40;
+  margin-bottom: 40px;
+  font-size: 3rem;
+}
+
+/* Footer styling */
+footer {
+  background-color: #343a40;
+  color: white;
+  padding: 20px 0;
+  text-align: center;
+}
+
+footer a {
+  color: #007bff;
+}
+
+footer a:hover {
+  color: #0056b3;
+  text-decoration: none;
+}
+
+/* Responsive adjustment for smaller screens */
+@media (max-width: 768px) {
+  .hero-section h1 {
+      font-size: 2rem;
+  }
+}

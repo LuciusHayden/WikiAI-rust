@@ -27,11 +27,9 @@ def redirect_to_wayback(url):
     return wayback_url
 
 def process_data(url, question):
-    # for testing without needing to use tokens
     if (url == "" or question == ""):
         return "Please enter a valid question and url"
     
-    return "test"
     try:
         response = requests.get(url)
         html = response.text

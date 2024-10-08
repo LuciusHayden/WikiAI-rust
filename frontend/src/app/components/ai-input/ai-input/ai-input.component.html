@@ -1,23 +1,28 @@
-<div class="h-100 d-flex align-items-center justify-content-center" style="margin-top: 10%;">
-  <div>
-    <a> question</a>
-    <input type="text" class="form-control" style="display: flex; flex-direction: column; align-items: center;" [(ngModel)]="input.question" />
+<div class="container mt-5">
+  <div class="row mb-3 justify-content-center">
+    <div class="col-md-6">
+      <label for="question" class="form-label">Question</label>
+      <input type="text" id="question" class="form-control" [(ngModel)]="input.question" placeholder="Enter your question" />
+    </div>
   </div>
-
-  <div>
-    <a> url</a>
-    <input class="form-control" type="text" style="display: flex; flex-direction: column; align-items: center;" [(ngModel)]="input.url" />
+  <div class="row mb-3 justify-content-center">
+    <div class="col-md-6">
+      <label for="url" class="form-label">URL</label>
+      <input type="text" id="url" class="form-control" [(ngModel)]="input.url" placeholder="Enter the URL" />
+    </div>
+  </div>
+  <div *ngIf="response.result" class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card bg-light mb-3">
+        <div class="card-body">
+          <p class="card-text">{{ response.result }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row justify-content-center mt-4">
+    <div class="col-md-6 text-center">
+      <button class="btn btn-primary btn-lg" (click)="processWikiSite()">Submit</button>
+    </div>
   </div>
 </div>
-
-
-<div  *ngIf ="response.result" class="card bg-light mb-3">
-
-  <p>{{response.result}}</p>
-
-</div>
-
-<div class="h-100 d-flex align-items-center justify-content-center" style="margin-top: 5%;">
-  <button class ="btn btn-primary" (click)="processWikiSite()">Submit</button>
-</div>
-
