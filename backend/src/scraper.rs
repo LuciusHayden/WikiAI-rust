@@ -10,8 +10,8 @@ pub struct References {
 }
 
 impl References {
-    pub fn new(url : &str) -> References {
-        get_references(url)
+    pub async fn new(url : &str) -> References {
+        get_references(url).await
     }
 }
 
@@ -29,12 +29,10 @@ impl openai::Processable for References {
 
 }
 
-pub fn get_references(url : &str) -> References {
+pub async fn get_references(url : &str) -> References {
 
-    let response = reqwest::blocking::get(url);
-    let html_string = response.unwrap().text().unwrap();
-
-    println!("{}", html_string);
+    let response = reqwest::get(url).await.unwrap();
+    let html_string = response.text().await.unwrap();
 
     let html = scraper::Html::parse_document(&html_string); 
 
