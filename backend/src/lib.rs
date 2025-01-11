@@ -35,10 +35,8 @@ mod tests {
 
     #[tokio::test]
     async fn query() {
-        println!("pre appstate");
-        let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::BASE).await;
-        println!("Post appstate");
-        let result = app_state.llm_query("tesitng").await;
+        let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::RAG).await;
+        let result = app_state.llm_query("what is your context?").await;
         println!("{}", result);
     }
 

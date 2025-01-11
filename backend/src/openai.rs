@@ -22,9 +22,7 @@ use langchain_rust::{
     memory::SimpleMemory,
 };
 
-use std::io::Write;
 use url::Url;
-use scraper::ReferencesTrait;
 use futures_util::StreamExt;
 
 pub struct LLMClient {
@@ -40,16 +38,16 @@ impl LLMClient {
     pub async fn new(references : &scraper::References, option : LlmOptions) -> LLMClient {
         let embedder = OpenAiEmbedder::default();
 
-        let client = Qdrant::from_url("https://localhost:6334").build().unwrap();
+        let client = Qdrant::from_url("http://127.0.0.1:6334").build().unwrap();
 
-        let store = StoreBuilder::new().client(client).embedder(embedder).collection_name("wikiAI").build().await.unwrap();
+        let store = StoreBuilder::new().embedder(embedder).client(client).collection_name("wikiAI").build().await.unwrap();
 
         let open_ai = OpenAI::default().with_model(OpenAIModel::Gpt35.to_string());
 
         let prompt = message_formatter![fmt_message!(Message::new_system_message(
             "You are a helpful assistant"
             )),
-            fmt_template!(HumanMessagePromptTemplate::new(template_fstring!("{input}", "input")))];
+            fmt_template!(HumanMessagePromptTemplate::new(template_fstring!("{question}", "question")))];
 
         let chain :Box<dyn Chain> = match option {
             LlmOptions::BASE => Box::new(LLMChainBuilder::new().prompt(prompt).llm(open_ai.clone()).build().unwrap()),
@@ -97,10 +95,10 @@ async fn store_documents(references : &scraper::References, storage : Box<dyn Ve
         use langchain_rust::vectorstore::VecStoreOptions;
 
         for reference in references.references.iter() {
-            let documents = convert_reference_to_docs(reference).await;
-
-            storage.add_documents(&documents, &VecStoreOptions::default()).await.unwrap(); 
-        
+            if reference.link.contains("https") {
+                let documents = convert_reference_to_docs(reference).await;
+                storage.add_documents(&documents, &VecStoreOptions::default()).await.unwrap(); 
+            }
         }
         storage
     }
@@ -112,14 +110,18 @@ async fn convert_reference_to_docs(reference : &scraper::Reference)-> Vec<Docume
     let url : &str = &reference.link;
 
     let response = reqwest::get(url).await;
-    let html : String = response.unwrap().text().await.unwrap();
 
-    let html_cursor = Cursor::new(html);
+    println!("{url}");
+    let html  = response.unwrap().text().await.unwrap();
+
+    // let html_cursor = Cursor::new(html);
   
-    let html_loader = HtmlLoader::new(
-        html_cursor,
-        Url::parse(url).unwrap(),
-        );
+    let html_loader = HtmlLoader::from_string(html, Url::parse(url).unwrap());
+
+    // let html_loader = HtmlLoader::new(
+       // html_cursor,
+       // Url::parse(url).unwrap(),
+       // );
 
 
     let document = html_loader
