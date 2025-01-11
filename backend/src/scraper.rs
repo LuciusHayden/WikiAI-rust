@@ -41,12 +41,20 @@ pub async fn get_references(url : &str) -> References {
 
     let mut references_vec : Vec<Reference> = Vec::new(); 
 
-    for reference in references {
-        let link = reference.select(&scraper::Selector::parse("a").unwrap())
-            .next().and_then(|a| a.value().attr("href")).map(|s| s.to_owned()).unwrap_or_default();
+    for reference in html.select(&references_selector) {
+        // Extract the first hyperlink within each reference
+        for r in reference.select(&scraper::Selector::parse("span.reference-text").unwrap()) {
 
-        let new_ref = Reference { link };
-        references_vec.push(new_ref);
+            if let Some(link) = r 
+                .select(&scraper::Selector::parse("a").unwrap())
+                .next()
+                .and_then(|a| a.value().attr("href"))
+            {
+                references_vec.push(Reference {
+                    link: link.to_owned(),
+             });
+            }
+        }
     }
     References {references : references_vec }
 
@@ -56,9 +64,10 @@ pub async fn get_references(url : &str) -> References {
 pub mod test {
     use super::*;
 
-//    #[test]
-    fn test_scraper() {
-        get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie");
+    #[tokio::test]
+    async fn test_scraper() {
+        let blah = get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie").await;
+        println!("reference : {}", blah.references[0].link);
     }
 
 }

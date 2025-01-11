@@ -15,12 +15,10 @@ impl AppState {
         
         let references = References::new(url).await; 
         let llmclient = LLMClient::new(&references, options).await;
-        println!("after?");
         AppState {references , llmclient}
     }
 
     pub async fn llm_query(&self, query : &str) -> String {
-        println!("async");
         self.llmclient.query(query).await
     }
 }
@@ -36,8 +34,9 @@ mod tests {
     #[tokio::test]
     async fn query() {
         let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::RAG).await;
-        let result = app_state.llm_query("what is your context?").await;
-        println!("{}", result);
+        // let result = app_state.llm_query("what is your context?").await;
+        println!("{}", app_state.references.references[0].link);
+        // println!("{}", result);
     }
 
 }
