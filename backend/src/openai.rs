@@ -86,7 +86,7 @@ impl LLMClient {
 
     pub async fn query(&self, query: &str) -> String {
 
-        self.chain.invoke(prompt_args!{"question" => query}).await.unwrap()
+        self.chain.invoke(prompt_args!{"question" => query }).await.unwrap()
     }
 
 }
@@ -97,7 +97,9 @@ async fn store_documents(references : &scraper::References, storage : Box<dyn Ve
         for reference in references.references.iter() {
             if reference.link.contains("https") {
                 let documents = convert_reference_to_docs(reference).await;
-                storage.add_documents(&documents, &VecStoreOptions::default()).await.unwrap(); 
+                if let Err(_) = storage.add_documents(&documents, &VecStoreOptions::default()).await {
+                    break;
+                }
             }
         }
         storage
@@ -111,18 +113,9 @@ async fn convert_reference_to_docs(reference : &scraper::Reference)-> Vec<Docume
 
     let response = reqwest::get(url).await;
 
-    println!("{url}");
     let html  = response.unwrap().text().await.unwrap();
 
-    // let html_cursor = Cursor::new(html);
-  
     let html_loader = HtmlLoader::from_string(html, Url::parse(url).unwrap());
-
-    // let html_loader = HtmlLoader::new(
-       // html_cursor,
-       // Url::parse(url).unwrap(),
-       // );
-
 
     let document = html_loader
         .load()

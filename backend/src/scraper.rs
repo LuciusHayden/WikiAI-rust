@@ -37,7 +37,6 @@ pub async fn get_references(url : &str) -> References {
     let html = scraper::Html::parse_document(&html_string); 
 
     let references_selector = scraper::Selector::parse("ol.references").unwrap();
-    let references = html.select(&references_selector);
 
     let mut references_vec : Vec<Reference> = Vec::new(); 
 
@@ -66,8 +65,7 @@ pub mod test {
 
     #[tokio::test]
     async fn test_scraper() {
-        let blah = get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie").await;
-        println!("reference : {}", blah.references[0].link);
+        let _blah = get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie").await;
     }
 
 }

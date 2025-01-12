@@ -34,9 +34,9 @@ mod tests {
     #[tokio::test]
     async fn query() {
         let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::RAG).await;
-        // let result = app_state.llm_query("what is your context?").await;
-        println!("{}", app_state.references.references[0].link);
-        // println!("{}", result);
+        let result = app_state.llm_query("what is your context?").await;
+        // println!("{}", app_state.references.references[0].link);
+        println!("{}", result);
     }
 
 }
