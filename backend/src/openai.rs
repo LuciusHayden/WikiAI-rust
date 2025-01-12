@@ -58,7 +58,6 @@ impl LLMClient {
                 };
                 
                 let prompt= message_formatter![
-                    fmt_message!(Message::new_system_message("You are a helpful assistant")),
                     fmt_template!(HumanMessagePromptTemplate::new(
                     template_jinja2!("
             Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
@@ -72,7 +71,7 @@ impl LLMClient {
                     "context","question")))
 
                 ];
-   
+
                 let store = store_documents(references, Box::new(store)).await;
 
                 Box::new(ConversationalRetrieverChainBuilder::new()
@@ -85,7 +84,6 @@ impl LLMClient {
     }
 
     pub async fn query(&self, query: &str) -> String {
-
         self.chain.invoke(prompt_args!{"question" => query }).await.unwrap()
     }
 
@@ -98,6 +96,7 @@ async fn store_documents(references : &scraper::References, storage : Box<dyn Ve
             if reference.link.contains("https") {
                 let documents = convert_reference_to_docs(reference).await;
                 if let Err(_) = storage.add_documents(&documents, &VecStoreOptions::default()).await {
+                    println!("vectorstorage filled");
                     break;
                 }
             }
