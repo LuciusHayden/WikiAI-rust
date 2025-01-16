@@ -1,11 +1,8 @@
-use openai_api_rust::{*, chat::*};
-use std::io::Cursor;
-use crate::scraper;
+use crate::scraper::*;
 
 use langchain_rust::{
     chain::{Chain, LLMChainBuilder, ConversationalRetrieverChainBuilder},
-    fmt_message, fmt_placeholder, fmt_template,
-    language_models::llm::LLM,
+    fmt_message, fmt_template,
     llm::openai::{OpenAI, OpenAIModel},
     message_formatter,
     prompt::HumanMessagePromptTemplate,
@@ -35,7 +32,7 @@ pub enum LlmOptions {
 }
 
 impl LLMClient {
-    pub async fn new(references : &scraper::References, option : LlmOptions) -> LLMClient {
+    pub async fn new(references : &References, option : LlmOptions) -> LLMClient {
         let embedder = OpenAiEmbedder::default();
 
         let client = Qdrant::from_url("http://127.0.0.1:6334").build().unwrap();
@@ -53,8 +50,8 @@ impl LLMClient {
             LlmOptions::BASE => Box::new(LLMChainBuilder::new().prompt(prompt).llm(open_ai.clone()).build().unwrap()),
             LlmOptions::RAG => {
                 use langchain_rust::{
-                    fmt_message, fmt_template, message_formatter, prompt::HumanMessagePromptTemplate,
-                    schemas::Message, template_jinja2,
+                    fmt_template, message_formatter, prompt::HumanMessagePromptTemplate,
+                    template_jinja2,
                 };
                 
                 let prompt= message_formatter![
@@ -89,24 +86,22 @@ impl LLMClient {
 
 }
 
-async fn store_documents(references : &scraper::References, storage : Box<dyn VectorStore>) ->  Box<dyn VectorStore>{
-        use langchain_rust::vectorstore::VecStoreOptions;
+async fn store_documents(references : &References, storage : Box<dyn VectorStore>) ->  Box<dyn VectorStore>{
+    use langchain_rust::vectorstore::VecStoreOptions;
 
-        for reference in references.references.iter() {
-            if reference.link.contains("https") {
-                let documents = convert_reference_to_docs(reference).await;
-                if let Err(_) = storage.add_documents(&documents, &VecStoreOptions::default()).await {
-                    println!("vectorstorage filled");
-                    break;
-                }
+    for reference in references.references.iter() {
+        if reference.link.contains("https") {
+            let documents = convert_reference_to_docs(reference).await;
+            if let Err(_) = storage.add_documents(&documents, &VecStoreOptions::default()).await {
+                println!("vectorstorage filled");
+                break;
             }
         }
-        storage
     }
+    storage
+}
 
-
-
-async fn convert_reference_to_docs(reference : &scraper::Reference)-> Vec<Document >{
+async fn convert_reference_to_docs(reference : &Reference)-> Vec<Document >{
 
     let url : &str = &reference.link;
 
@@ -135,7 +130,6 @@ pub trait Processable {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
 
     #[tokio::test]
     async fn test() {
