@@ -9,13 +9,14 @@ use api::*;
 use backend::AppState;
 
 use std::sync::Arc;
+use tokio::sync::Mutex;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 
     
-    let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", backend::openai::LlmOptions::RAG).await;
-    let state = Arc::new(app_state);
+    let app_state = AppState::new_empty().await;
+    let state = Arc::new(Mutex::new(app_state));
     
     let app = api::get_routes(state).await; 
     let addr = SocketAddr::from(([127, 0, 0, 1], 3000));

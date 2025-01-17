@@ -1,9 +1,6 @@
 use crate::openai; 
 
 
-pub trait ReferencesTrait {
-    fn query (question : &str) -> &str;
-}
 
 pub struct References {
     pub references : Vec<Reference>,
@@ -13,21 +10,15 @@ impl References {
     pub async fn new(url : &str) -> References {
         get_references(url).await
     }
+
+    pub async fn new_empty() -> References {
+        References { references : Vec::new(), }
+    }
 }
 
 pub struct Reference {
     pub link : String,
 } 
-
-
-
-impl openai::Processable for References {
-
-    fn convert_data(&self) -> String {
-        "".to_string()
-    }
-
-}
 
 pub async fn get_references(url : &str) -> References {
 

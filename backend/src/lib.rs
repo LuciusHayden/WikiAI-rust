@@ -19,6 +19,24 @@ impl AppState {
         AppState {references , llmclient}
     }
 
+    pub async fn new_empty() -> AppState {
+        let references = References::new_empty().await;
+        let llmclient = LLMClient::new(&references, LlmOptions::BASE).await;
+
+        AppState {references, llmclient }
+    }
+
+    pub async fn set_references(&mut self, url : &str) {
+        let references =  References::new(url).await;
+        self.references = references;
+        self.reload_llmclient(LlmOptions::RAG).await;
+    }
+
+    async fn reload_llmclient(&mut self, options: LlmOptions) {
+        let llmclient = LLMClient::new(&self.references, options).await;
+        self.llmclient = llmclient;
+    }
+
     pub async fn llm_query(&self, query : &str) -> String {
         self.llmclient.query(query).await
     }
