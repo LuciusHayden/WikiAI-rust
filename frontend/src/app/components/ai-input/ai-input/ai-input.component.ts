@@ -15,13 +15,11 @@ import { CommonModule } from '@angular/common';
 export class AiInputComponent {
 
   input : AiInput = {
-    url: '',
-    question: ''
+    query : ''
   }
 
   response : AiResponse = {
-    result: ' ',
-    id: 0
+    response : ' ',
   }
 
   constructor(private _aiInputService: AiInputService) {

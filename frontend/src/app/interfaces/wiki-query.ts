@@ -1,9 +1,7 @@
 export interface AiResponse {
-  result : string
-  id : number
+  response : string
 }
 
 export interface AiInput {
-  url : string
-  question : string
+  query : string
 }

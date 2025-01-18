@@ -16,7 +16,7 @@ export class AiInputService {
   }
 
   processWikiSite(aiInput: AiInput): Observable<AiResponse> {
-    return this.http.post<AiResponse>('http://localhost:5000/api/query', aiInput , {headers: this.headers});
+    return this.http.post<AiResponse>('http://localhost:3000/query', aiInput , {headers: this.headers});
   }
 }
 

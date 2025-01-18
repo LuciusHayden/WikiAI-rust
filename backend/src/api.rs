@@ -12,13 +12,22 @@ use crate::AppState;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 use crate::scraper;
+use http::Method;
+use tower_http::cors::{Any, CorsLayer};
 
 pub async fn get_routes(state : Arc<Mutex<AppState>>)-> axum::Router {
+
+     let cors = CorsLayer::new()
+        .allow_origin(Any)
+        .allow_methods([Method::GET, Method::POST])
+        .allow_headers(Any);
+
     Router::new()
         .route("/query", post(query))
         .route("/set-references", post(set_references))
         .route("/get-references", get(get_references))
         .with_state(state)
+        .layer(cors)
 
 }
 
@@ -37,7 +46,6 @@ async fn set_references(state : State<Arc<Mutex<AppState>>> , Json(payload) : Js
 struct Reference {
     link : String,
 }
-
 
 async fn query(state : State<Arc<Mutex<AppState>>> , Json(payload) : Json<Query>)-> Json<Response> {
     Json(Response { response :  state.lock().await.llm_query(&payload.query).await })

@@ -8,6 +8,7 @@ use backend::AppState;
 use std::sync::Arc;
 use tokio::sync::Mutex;
 
+use tower_http::cors::{Any, CorsLayer};
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
 
