@@ -1,7 +1,10 @@
-use crate::openai; 
+use serde::{Serialize, Deserialize};
 
-
-
+// note that escraper is the scraper crate, it had to be renamed
+//
+#[derive(Clone)]
+#[derive(Serialize)]
+#[derive(Deserialize)]
 pub struct References {
     pub references : Vec<Reference>,
 }
@@ -16,6 +19,9 @@ impl References {
     }
 }
 
+#[derive(Clone)]
+#[derive(Serialize)]
+#[derive(Deserialize)]
 pub struct Reference {
     pub link : String,
 } 
@@ -25,18 +31,18 @@ pub async fn get_references(url : &str) -> References {
     let response = reqwest::get(url).await.unwrap();
     let html_string = response.text().await.unwrap();
 
-    let html = scraper::Html::parse_document(&html_string); 
+    let html = escraper::Html::parse_document(&html_string); 
 
-    let references_selector = scraper::Selector::parse("ol.references").unwrap();
+    let references_selector = escraper::Selector::parse("ol.references").unwrap();
 
     let mut references_vec : Vec<Reference> = Vec::new(); 
 
     for reference in html.select(&references_selector) {
         // Extract the first hyperlink within each reference
-        for r in reference.select(&scraper::Selector::parse("span.reference-text").unwrap()) {
+        for r in reference.select(&escraper::Selector::parse("span.reference-text").unwrap()) {
 
             if let Some(link) = r 
-                .select(&scraper::Selector::parse("a").unwrap())
+                .select(&escraper::Selector::parse("a").unwrap())
                 .next()
                 .and_then(|a| a.value().attr("href"))
             {

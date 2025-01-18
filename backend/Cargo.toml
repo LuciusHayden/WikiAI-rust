@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 reqwest = { version = "0.12.12", features = ["blocking"] }
-scraper = "0.22.0"
+escraper = {version = "0.22.0", package="scraper"}
 openai_api_rust = "0.1.9"
 serde_json = "1.0.135"
 langchain-rust = { version = "4.6.0", features = ["qdrant"] }
@@ -15,3 +15,4 @@ tower="0.4"
 axum="0.7"
 anyhow="1"
 serde = "1.0.217"
+

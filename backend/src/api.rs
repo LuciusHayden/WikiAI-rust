@@ -11,13 +11,19 @@ use serde::{Serialize, Deserialize};
 use crate::AppState;
 use std::sync::Arc;
 use tokio::sync::Mutex;
+use crate::scraper;
 
 pub async fn get_routes(state : Arc<Mutex<AppState>>)-> axum::Router {
     Router::new()
         .route("/query", post(query))
         .route("/set-references", post(set_references))
+        .route("/get-references", get(get_references))
         .with_state(state)
 
+}
+
+async fn get_references(state : State<Arc<Mutex<AppState>>>) -> Json<scraper::References> {
+    Json(scraper::References {references: state.lock().await.get_references().await.clone() } )
 }
 
 async fn set_references(state : State<Arc<Mutex<AppState>>> , Json(payload) : Json<Reference>) {
@@ -27,6 +33,7 @@ async fn set_references(state : State<Arc<Mutex<AppState>>> , Json(payload) : Js
 
 #[derive(Clone)]
 #[derive(Deserialize)]
+#[derive(Serialize)]
 struct Reference {
     link : String,
 }

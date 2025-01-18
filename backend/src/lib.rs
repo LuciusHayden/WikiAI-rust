@@ -26,6 +26,10 @@ impl AppState {
         AppState {references, llmclient }
     }
 
+    pub async fn get_references(&self) -> Vec<Reference>{
+        self.references.references.clone()
+    }
+
     pub async fn set_references(&mut self, url : &str) {
         let references =  References::new(url).await;
         self.references = references;

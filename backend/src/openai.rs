@@ -57,7 +57,8 @@ impl LLMClient {
                 let prompt= message_formatter![
                     fmt_template!(HumanMessagePromptTemplate::new(
                     template_jinja2!("
-            Use the following pieces of context to answer the question at the end. If you don't know the answer, just say that you don't know, don't try to make up an answer.
+            Use the following pieces of context to answer the question at the end. If the context doesnt contain the answer, just say that you don't know, don't try to make up an answer.
+            If differnt sources say different things then say that. 
 
             {{context}}
 
