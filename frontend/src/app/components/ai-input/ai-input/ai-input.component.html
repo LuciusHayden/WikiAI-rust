@@ -2,14 +2,14 @@
   <div class="row mb-3 justify-content-center">
     <div class="col-md-6">
       <label for="question" class="form-label">Question</label>
-      <input type="text" id="question" class="form-control" [(ngModel)]="input.query" placeholder="Enter your question" />
+      <input type="text" id="question" class="form-control" [(ngModel)]="component.input.query" placeholder="Enter your question" />
     </div>
   </div>
-  <div *ngIf="response.response" class="row justify-content-center">
+  <div *ngIf="component.response" class="row justify-content-center">
     <div class="col-md-6">
       <div class="card bg-light mb-3">
         <div class="card-body">
-          <p class="card-text">{{ response.response}}</p>
+          <p class="card-text">{{ component.response.response }}</p>
         </div>
       </div>
     </div>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { AiInput, AiResponse } from '../../../interfaces/wiki-query';
+import { AiComponent, AiResponse } from '../../../interfaces/wiki-query';
 import { AiInputService } from '../../../services/ai-input.service';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -14,20 +14,19 @@ import { CommonModule } from '@angular/common';
 })
 export class AiInputComponent {
 
-  input : AiInput = {
-    query : ''
-  }
-
-  response : AiResponse = {
-    response : ' ',
-  }
+  component : AiComponent = {
+      input : { query :  "" },
+      response : { response: "" },
+      references : { references : []},
+      main_reference : { link : ""},
+    }
 
   constructor(private _aiInputService: AiInputService) {
    }
 
   processWikiSite() : void {
-      this._aiInputService.processWikiSite(this.input).subscribe((response : AiResponse) => {
-        this.response = response;
+      this._aiInputService.processWikiSite(this.component.input).subscribe((response : AiResponse) => {
+        this.component.response = response;
       })
   }
 

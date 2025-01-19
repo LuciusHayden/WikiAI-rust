@@ -7,6 +7,7 @@ use scraper::*;
 
 
 pub struct AppState {
+    main_reference : Option<Reference>,
     references : scraper::References,
     llmclient : openai::LLMClient,
 }
@@ -16,14 +17,14 @@ impl AppState {
         
         let references = References::new(url).await; 
         let llmclient = LLMClient::new(&references, options).await;
-        AppState {references , llmclient}
+        AppState {main_reference : Some(Reference { link : url.to_string() } ), references , llmclient}
     }
 
     pub async fn new_empty() -> AppState {
         let references = References::new_empty().await;
         let llmclient = LLMClient::new(&references, LlmOptions::BASE).await;
 
-        AppState {references, llmclient }
+        AppState {main_reference : None, references, llmclient }
     }
 
     pub async fn get_references(&self) -> Vec<Reference>{
@@ -43,6 +44,10 @@ impl AppState {
 
     pub async fn llm_query(&self, query : &str) -> String {
         self.llmclient.query(query).await
+    }
+
+    pub async fn get_main_reference(&self) -> Option<Reference> {
+        self.main_reference.clone()
     }
 }
 
