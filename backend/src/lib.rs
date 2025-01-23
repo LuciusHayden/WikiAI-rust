@@ -5,11 +5,13 @@ pub mod api;
 use openai::*;
 use scraper::*;
 
+use std::sync::Arc;
+use tokio::sync::Mutex;
 
 pub struct AppState {
     main_reference : Option<Reference>,
     references : scraper::References,
-    llmclient : openai::LLMClient,
+    llmclient : Arc<Mutex<openai::LLMClient>>,
 }
 
 impl AppState {
@@ -17,21 +19,23 @@ impl AppState {
         
         let references = References::new(url).await; 
         let llmclient = LLMClient::new(&references, options).await;
-        AppState {main_reference : Some(Reference { link : url.to_string() } ), references , llmclient}
+        let llmclient = Arc::new(Mutex::new(llmclient));
+        AppState {main_reference : Some(Reference { link : url.to_string(), id : 0} ), references , llmclient }
     }
 
     pub async fn new_empty() -> AppState {
         let references = References::new_empty().await;
         let llmclient = LLMClient::new(&references, LlmOptions::BASE).await;
 
-        AppState {main_reference : None, references, llmclient }
+        AppState {main_reference : None, references, llmclient : Arc::new(Mutex::new(llmclient)) }
     }
 
-    pub async fn get_references(&self) -> Vec<Reference>{
-        self.references.references.clone()
+    pub async fn get_references(&self) -> &Vec<Reference>{
+        &self.references.references
     }
 
     pub async fn set_references(&mut self, url : &str) {
+        self.main_reference = Some(Reference {link : url.to_string(), id: 0});
         let references =  References::new(url).await;
         self.references = references;
         self.reload_llmclient(LlmOptions::RAG).await;
@@ -39,11 +43,12 @@ impl AppState {
 
     async fn reload_llmclient(&mut self, options: LlmOptions) {
         let llmclient = LLMClient::new(&self.references, options).await;
-        self.llmclient = llmclient;
+        let mut client = self.llmclient.lock().await;
+        *client = llmclient;
     }
 
     pub async fn llm_query(&self, query : &str) -> String {
-        self.llmclient.query(query).await
+        self.llmclient.lock().await.query(query).await
     }
 
     pub async fn get_main_reference(&self) -> Option<Reference> {

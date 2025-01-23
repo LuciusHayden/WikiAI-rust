@@ -33,6 +33,7 @@ pub async fn get_routes(state : Arc<Mutex<AppState>>)-> axum::Router {
 }
 
 async fn get_main_reference(state : State<Arc<Mutex<AppState>>>) -> Json<scraper::Reference> {
+    // println!("{}", state.lock().await.get_main_reference().await.unwrap().link);
     Json(state.lock().await.get_main_reference().await.expect("Input a wikipedia url to get started!"))
 }
 

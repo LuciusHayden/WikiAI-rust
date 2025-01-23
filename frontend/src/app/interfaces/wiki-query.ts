@@ -7,15 +7,13 @@ export interface AiInput {
 }
 
 export interface Reference {
-  link : String
+  link : String,
+  id : number
 }
 
 export interface References {
   references : Reference[]
 }
-
-
-
 
 export interface AiComponent {
   response :  AiResponse,

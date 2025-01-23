@@ -1,5 +1,5 @@
-import { Component } from '@angular/core';
-import { AiComponent, AiResponse } from '../../../interfaces/wiki-query';
+import { Component, OnInit } from '@angular/core';
+import { AiComponent, AiResponse, Reference, References } from '../../../interfaces/wiki-query';
 import { AiInputService } from '../../../services/ai-input.service';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
@@ -18,11 +18,29 @@ export class AiInputComponent {
       input : { query :  "" },
       response : { response: "" },
       references : { references : []},
-      main_reference : { link : ""},
-    }
+      main_reference : { link : "", id : 0},
+  }
+
+  main_reference_change : Reference = {
+    link : "",
+    id : 0, // this vaue doesnt matter, the backend doesnt use it
+  }
 
   constructor(private _aiInputService: AiInputService) {
-   }
+  }
+
+  ngOnInit() {
+    this.reload_references();
+  }
+
+  reload_references() : void {
+    this._aiInputService.getMainReference().subscribe((reference : Reference) => {
+      this.component.main_reference = reference;
+    });
+     this._aiInputService.getReferences().subscribe((references : References) => {
+      this.component.references = references;
+    });
+  }
 
   processWikiSite() : void {
       this._aiInputService.processWikiSite(this.component.input).subscribe((response : AiResponse) => {
@@ -30,4 +48,8 @@ export class AiInputComponent {
       })
   }
 
+  setReferences() : void {
+    this._aiInputService.setReferences(this.main_reference_change).subscribe();
+    this.reload_references();
+  }
 }

@@ -1,22 +1,89 @@
 <div class="container mt-5">
-  <div class="row mb-3 justify-content-center">
-    <div class="col-md-6">
-      <label for="question" class="form-label">Question</label>
-      <input type="text" id="question" class="form-control" [(ngModel)]="component.input.query" placeholder="Enter your question" />
-    </div>
-  </div>
-  <div *ngIf="component.response" class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card bg-light mb-3">
-        <div class="card-body">
-          <p class="card-text">{{ component.response.response }}</p>
+  <div class="row">
+    <!-- Main Content Section -->
+    <div class="col-md-8">
+      <!-- Question Input Section -->
+      <div class="row mb-3">
+        <div class="col-12">
+          <label for="question" class="form-label">Question</label>
+          <input
+            type="text"
+            id="question"
+            class="form-control"
+            [(ngModel)]="component.input.query"
+            placeholder="Enter your question"
+          />
+        </div>
+      </div>
+
+      <!-- Response Section -->
+      <div *ngIf="component.response.response" class="row">
+        <div class="col-12">
+          <div class="card bg-light mb-3">
+            <div class="card-body">
+              <p class="card-text">{{ component.response.response }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Button -->
+      <div class="row mt-4">
+        <div class="col-12 text-center">
+          <button class="btn btn-primary btn-lg" (click)="processWikiSite()">Submit</button>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row justify-content-center mt-4">
-    <div class="col-md-6 text-center">
-      <button class="btn btn-primary btn-lg" (click)="processWikiSite()">Submit</button>
+
+    <!-- References Section (Sidebar) -->
+    <div class="col-md-4">
+      <!-- Main Reference -->
+      <div class="card bg-primary text-white mb-3">
+        <div class="card-header">Main Reference</div>
+        <div class="card-body text-center">
+          <a [href]="component.main_reference.link" target="_blank" class="text-white">
+            {{ component.main_reference.link }}
+          </a>
+        </div>
+      </div>
+
+      <!-- References Dropdown (Only Show if there are Other References) -->
+      <div *ngIf="component.references.references.length > 0">
+        <div class="dropdown">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="referencesDropdown"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            View Other References
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="referencesDropdown">
+            <li *ngFor="let reference of component.references.references" class="dropdown-item">
+              <a [href]="reference.link" target="_blank">{{ reference.link }}</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Reference Input Section (Optional Section to Change Main Reference) -->
+      <div class="mt-3">
+        <label for="mainReferenceLink" class="form-label">Update Main Reference</label>
+        <input
+          type="text"
+          id="mainReferenceLink"
+          class="form-control"
+          [(ngModel)]="main_reference_change.link"
+          placeholder="Enter new main reference link"
+        />
+        <button
+          class="btn btn-warning btn-sm mt-2"
+          (click)="setReferences()"
+        >
+          Update Main Reference
+        </button>
+      </div>
     </div>
   </div>
 </div>

@@ -73,7 +73,7 @@ impl LLMClient {
                 let store = store_documents(references, Box::new(store)).await;
 
                 Box::new(ConversationalRetrieverChainBuilder::new()
-                    .llm(open_ai.clone()).rephrase_question(true).memory(SimpleMemory::new().into())
+                    .llm(open_ai.clone()).rephrase_question(false).memory(SimpleMemory::new().into())
                     .retriever(Retriever::new(store, 5)).prompt(prompt).build().expect("Error building ConversationalRetriever"))
             }
         };

@@ -24,6 +24,7 @@ impl References {
 #[derive(Deserialize)]
 pub struct Reference {
     pub link : String,
+    pub id : usize,
 } 
 
 pub async fn get_references(url : &str) -> References {
@@ -37,6 +38,8 @@ pub async fn get_references(url : &str) -> References {
 
     let mut references_vec : Vec<Reference> = Vec::new(); 
 
+    let mut counter = 1;
+
     for reference in html.select(&references_selector) {
         // Extract the first hyperlink within each reference
         for r in reference.select(&escraper::Selector::parse("span.reference-text").unwrap()) {
@@ -48,7 +51,9 @@ pub async fn get_references(url : &str) -> References {
             {
                 references_vec.push(Reference {
                     link: link.to_owned(),
+                    id : counter,
              });
+                counter += 1;
             }
         }
     }
