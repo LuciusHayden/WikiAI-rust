@@ -16,7 +16,7 @@ export class AiInputComponent {
 
   component : AiComponent = {
       input : { query :  "" },
-      response : { response: "", sources: [] },
+      response : { response: "", sources:{ references : []} },
       references : { references : []},
       main_reference : { link : "", id : 0},
   }

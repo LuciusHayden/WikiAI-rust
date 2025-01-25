@@ -20,8 +20,18 @@
       <div *ngIf="component.response.response" class="row">
         <div class="col-12">
           <div class="card bg-light mb-3">
+            <div class="card-header">Response</div>
             <div class="card-body">
               <p class="card-text">{{ component.response.response }}</p>
+              <!-- Display Sources if Available -->
+              <div *ngIf="component.response.sources.references.length > 0" class="mt-3">
+                <h6>Sources:</h6>
+                <ul class="list-group">
+                  <li *ngFor="let source of component.response.sources.references" class="list-group-item">
+                    <a [href]="source" target="_blank">{{ source.link }}</a>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -47,9 +57,9 @@
         </div>
       </div>
 
-      <!-- References Dropdown (Only Show if there are Other References) -->
+      <!-- References Dropdown -->
       <div *ngIf="component.references.references.length > 0">
-        <div class="dropdown">
+        <div class="dropdown mb-3">
           <button
             class="btn btn-secondary dropdown-toggle"
             type="button"
@@ -67,23 +77,22 @@
         </div>
       </div>
 
-      <!-- Reference Input Section (Optional Section to Change Main Reference) -->
-      <div class="mt-3">
-        <label for="mainReferenceLink" class="form-label">Update Main Reference</label>
-        <input
-          type="text"
-          id="mainReferenceLink"
-          class="form-control"
-          [(ngModel)]="main_reference_change.link"
-          placeholder="Enter new main reference link"
-        />
-        <button
-          class="btn btn-warning btn-sm mt-2"
-          (click)="setReferences()"
-        >
-          Update Main Reference
-        </button>
+      <!-- Reference Input Section -->
+      <div class="card bg-light">
+        <div class="card-header">Update Main Reference</div>
+        <div class="card-body">
+          <label for="mainReferenceLink" class="form-label">New Reference Link</label>
+          <input
+            type="text"
+            id="mainReferenceLink"
+            class="form-control mb-2"
+            [(ngModel)]="main_reference_change.link"
+            placeholder="Enter new main reference link"
+          />
+          <button class="btn btn-warning btn-sm w-100" (click)="setReferences()">Update</button>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
