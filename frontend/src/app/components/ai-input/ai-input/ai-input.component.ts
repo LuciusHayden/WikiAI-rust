@@ -16,7 +16,7 @@ export class AiInputComponent {
 
   component : AiComponent = {
       input : { query :  "" },
-      response : { response: "" },
+      response : { response: "", sources: [] },
       references : { references : []},
       main_reference : { link : "", id : 0},
   }
@@ -53,3 +53,4 @@ export class AiInputComponent {
     this.reload_references();
   }
 }
+

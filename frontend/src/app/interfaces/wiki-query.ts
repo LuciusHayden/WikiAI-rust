@@ -1,5 +1,6 @@
 export interface AiResponse {
   response : string
+  sources : Reference[]
 }
 
 export interface AiInput {

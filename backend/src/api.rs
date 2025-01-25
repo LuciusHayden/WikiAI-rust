@@ -14,6 +14,7 @@ use tokio::sync::Mutex;
 use crate::scraper;
 use http::Method;
 use tower_http::cors::{Any, CorsLayer};
+use crate::openai;
 
 pub async fn get_routes(state : Arc<Mutex<AppState>>)-> axum::Router {
 
@@ -46,9 +47,13 @@ async fn set_references(state : State<Arc<Mutex<AppState>>> , Json(payload) : Js
     app_state.set_references(&payload.link).await;
 }
 
-async fn query(state : State<Arc<Mutex<AppState>>> , Json(payload) : Json<Query>)-> Json<Response> {
-    Json(Response { response :  state.lock().await.llm_query(&payload.query).await })
+async fn query(state : State<Arc<Mutex<AppState>>>, Json(payload) : Json<Query>) -> Json<openai::QueryResult> {
+    Json(state.lock().await.llm_query(&payload.query).await)
 }
+
+//async fn query(state : State<Arc<Mutex<AppState>>> , Json(payload) : Json<Query>)-> Json<Response> {
+    //Json(Response { response :  state.lock().await.llm_query(&payload.query).await })
+//}
 
 #[derive(Clone)]
 #[derive(Deserialize)]

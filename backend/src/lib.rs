@@ -47,7 +47,11 @@ impl AppState {
         *client = llmclient;
     }
 
-    pub async fn llm_query(&self, query : &str) -> String {
+    //pub async fn llm_query(&self, query : &str) -> String {
+        //self.llmclient.lock().await.query(query).await
+    //}
+
+    pub async fn llm_query(&self, query : &str) -> openai::QueryResult {
         self.llmclient.lock().await.query(query).await
     }
 
@@ -63,10 +67,10 @@ mod tests {
 
     #[tokio::test]
     async fn query() {
-        let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::RAG).await;
-        let result = app_state.llm_query("what is rust?").await;
+        // let app_state = AppState::new("https://en.wikipedia.org/wiki/Chocolate_chip_cookie", LlmOptions::RAG).await;
+        let app_state = AppState::new_empty().await;
+        app_state.llmclient.lock().await.query("What is the context").await;
         // println!("{}", app_state.references.references[0].link);
-        println!("{}", result);
     }
 
 }

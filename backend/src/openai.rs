@@ -21,6 +21,7 @@ use langchain_rust::{
 
 use url::Url;
 use futures_util::StreamExt;
+use serde::Serialize;
 
 pub struct LLMClient {
     chain : Box<dyn Chain>,
@@ -74,17 +75,40 @@ impl LLMClient {
 
                 Box::new(ConversationalRetrieverChainBuilder::new()
                     .llm(open_ai.clone()).rephrase_question(false).memory(SimpleMemory::new().into())
-                    .retriever(Retriever::new(store, 5)).prompt(prompt).build().expect("Error building ConversationalRetriever"))
+                    .retriever(Retriever::new(store, 3)).prompt(prompt).build().expect("Error building ConversationalRetriever"))
             }
         };
 
         LLMClient { chain }
     }
 
-    pub async fn query(&self, query: &str) -> String {
-        self.chain.invoke(prompt_args!{"question" => query }).await.unwrap()
-    }
+    //pub async fn query(&self, query: &str) -> String {
+        //self.chain.invoke(prompt_args!{"question" => query }).await.unwrap()
+    //}
 
+    pub async fn query(&self, query : &str) -> QueryResult {
+        let results = self.chain.execute(prompt_args!{"question" => query}).await.unwrap();
+
+        let mut sources: Vec<Reference> = Vec::new();
+        let response = results.get("output").unwrap().to_string();
+
+        if let Some(source) = results.get("source_documents") {
+            let items = source.as_array().unwrap().iter().map(|object| object.get("metadata").unwrap().get("source").unwrap());
+            for source in items {
+                let reference = Reference {link : source.to_string()  ,id: 0 };
+                let _ = &sources.push(reference);
+            }
+        }
+
+        let sources = References { references : sources };
+        QueryResult { response, sources }
+    }
+}
+
+#[derive(Serialize)]
+pub struct QueryResult {
+    response : String,
+    sources : References,
 }
 
 async fn store_documents(references : &References, storage : Box<dyn VectorStore>) ->  Box<dyn VectorStore>{
@@ -123,19 +147,12 @@ async fn convert_reference_to_docs(reference : &Reference)-> Vec<Document >{
     document
 }
 
-pub trait Processable {
-    // not currently in use
-
-    fn convert_data(&self) -> String; 
-}
-
 #[cfg(test)]
 mod tests {
 
     #[tokio::test]
     async fn test() {
-        println!("Entering");
-//        openai_test("Testing").await;
+
         
     }
 }
