@@ -82,10 +82,6 @@ impl LLMClient {
         LLMClient { chain }
     }
 
-    //pub async fn query(&self, query: &str) -> String {
-        //self.chain.invoke(prompt_args!{"question" => query }).await.unwrap()
-    //}
-
     pub async fn query(&self, query : &str) -> QueryResult {
         let results = self.chain.execute(prompt_args!{"question" => query}).await.unwrap();
 

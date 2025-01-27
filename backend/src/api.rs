@@ -6,7 +6,7 @@ use axum:: {
     Json,
 };
 
-use serde::{Serialize, Deserialize};
+use serde::Deserialize;
 
 use crate::AppState;
 use std::sync::Arc;
@@ -28,14 +28,14 @@ pub async fn get_routes(state : Arc<Mutex<AppState>>)-> axum::Router {
         .route("/set-references", post(set_references))
         .route("/get-references", get(get_references))
         .route("/get-main-reference", get(get_main_reference))
+        .route("/reset-llm", post(reset))
         .with_state(state)
         .layer(cors)
 
 }
 
 async fn get_main_reference(state : State<Arc<Mutex<AppState>>>) -> Json<scraper::Reference> {
-    // println!("{}", state.lock().await.get_main_reference().await.unwrap().link);
-    Json(state.lock().await.get_main_reference().await.expect("Input a wikipedia url to get started!"))
+    Json(state.lock().await.get_main_reference().await.expect("expected a inputted wikipedia site"))
 }
 
 async fn get_references(state : State<Arc<Mutex<AppState>>>) -> Json<scraper::References> {
@@ -51,18 +51,12 @@ async fn query(state : State<Arc<Mutex<AppState>>>, Json(payload) : Json<Query>)
     Json(state.lock().await.llm_query(&payload.query).await)
 }
 
-//async fn query(state : State<Arc<Mutex<AppState>>> , Json(payload) : Json<Query>)-> Json<Response> {
-    //Json(Response { response :  state.lock().await.llm_query(&payload.query).await })
-//}
+async fn reset(state : State<Arc<Mutex<AppState>>>) {
+    state.lock().await.reload_llmclient(crate::LlmOptions::BASE).await;
+}
 
 #[derive(Clone)]
 #[derive(Deserialize)]
 struct Query {
     query: String,
-}
-
-#[derive(Clone)]
-#[derive(Serialize)]
-struct Response {
-    response : String,
 }

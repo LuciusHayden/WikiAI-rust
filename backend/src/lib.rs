@@ -47,9 +47,9 @@ impl AppState {
         *client = llmclient;
     }
 
-    //pub async fn llm_query(&self, query : &str) -> String {
-        //self.llmclient.lock().await.query(query).await
-    //}
+    pub async fn clear_references(&mut self) {
+        self.references = References::new_empty().await;
+    }
 
     pub async fn llm_query(&self, query : &str) -> openai::QueryResult {
         self.llmclient.lock().await.query(query).await

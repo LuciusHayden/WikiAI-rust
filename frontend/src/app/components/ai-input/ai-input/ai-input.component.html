@@ -28,7 +28,7 @@
                 <h6>Sources:</h6>
                 <ul class="list-group">
                   <li *ngFor="let source of component.response.sources.references" class="list-group-item">
-                    <a [href]="source" target="_blank">{{ source.link }}</a>
+                    <a [href]="source.link" target="_blank">{{ source.link }}</a>
                   </li>
                 </ul>
               </div>

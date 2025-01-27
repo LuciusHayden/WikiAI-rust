@@ -41,7 +41,6 @@ pub async fn get_references(url : &str) -> References {
     let mut counter = 1;
 
     for reference in html.select(&references_selector) {
-        // Extract the first hyperlink within each reference
         for r in reference.select(&escraper::Selector::parse("span.reference-text").unwrap()) {
 
             if let Some(link) = r 
@@ -67,7 +66,7 @@ pub mod test {
 
     #[tokio::test]
     async fn test_scraper() {
-        let _blah = get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie").await;
+        let _ = get_references("https://en.wikipedia.org/wiki/Chocolate_chip_cookie").await;
     }
 
 }
